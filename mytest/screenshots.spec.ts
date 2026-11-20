@@ -47,10 +47,12 @@ for (let i = 0; i < count; i++) {
   test('capture screenshots test2', async ({ page }) => {
   console.log("Test2 execution started");
   await page.goto('https://rahulshettyacademy.com/AutomationPractice/');
-  //await page.locator('.logoClass').screenshot({path:'./screenshot/home page screenshot.png'});
-  //await page.screenshot({path:'./screenshot/whole fullPage.png'});
-  //await page.screenshot({path:'./screenshot/fullPage1.png', fullPage:true});
+  await page.locator('.logoClass').screenshot({path:'./screenshot/home page screenshot.png'});
+  await page.screenshot({path:'./screenshot/whole fullPage.png'});
+  await page.screenshot({path:'./screenshot/fullPage1.png', fullPage:true});
+  await test.info();
   
+
 });
 
 
