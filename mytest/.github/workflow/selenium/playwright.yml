@@ -1,0 +1,84 @@
+name: Aviva Selenium Execution
+
+on:
+
+  workflow_dispatch:
+
+    inputs:
+
+      testCaseId:
+        description: "Enter Test Case ID"
+        required: true
+        type: string
+        default: "TC001"
+
+      testPlanName:
+        description: "Enter Test Plan Name"
+        required: true
+        type: choice
+        options:
+          - Smoke
+          - Regression
+          - Sanity
+
+      browser:
+        description: "Select Browser"
+        required: true
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
+
+      executionMode:
+        description: "Select Execution Mode"
+        required: true
+        type: choice
+        options:
+          - headless
+          - headed
+
+jobs:
+
+  selenium-execution:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Display Execution Parameters
+        run: |
+
+          echo "Test Case ID: ${{ inputs.testCaseId }}"
+          echo "Test Plan: ${{ inputs.testPlanName }}"
+          echo "Browser: ${{ inputs.browser }}"
+          echo "Execution Mode: ${{ inputs.executionMode }}"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Execute Selenium Tests
+        run: |
+
+          mvn clean test \
+          -Dbrowser=${{ inputs.browser }} \
+          -DtestCaseId=${{ inputs.testCaseId }} \
+          -DtestPlanName=${{ inputs.testPlanName }} \
+          -DexecutionMode=${{ inputs.executionMode }} \
+          -DgridUrl=http://localhost:4444
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-test-reports
+          path: |
+            target/surefire-reports/
+          if-no-files-found: warn
